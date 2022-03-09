@@ -19,50 +19,48 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.arquitectura.firmas.entities.Usuario;
 
-
+import models.UserDto;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;
 	private JWTService jwtService;
-		
+
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTService jwtService) {
 		this.authenticationManager = authenticationManager;
 		this.jwtService = jwtService;
 	}
+
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
-		
+
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		logger.info("username desde request paramter: "+username);
+		logger.info("username desde request paramter: " + username);
 		username = (username != null) ? username : "";
 		username = username.trim();
-		//String password = obtainPassword(request);
+		// String password = obtainPassword(request);
 		password = (password != null) ? password : "";
-		
-		logger.info("username desde request paramter: "+username);
-		logger.info("password desde request paramter: "+password);
-		
-		if(username.equals("") || password.equals("")) {
-			Usuario user=null;
+
+		logger.info("username desde request paramter: " + username);
+		logger.info("password desde request paramter: " + password);
+
+		if (username.equals("") || password.equals("")) {
+			UserDto user = null;
 			try {
-				user=new ObjectMapper().readValue(request.getInputStream(), Usuario.class);
-				username=user.getUsername();
-				password=user.getPassword();
-				logger.info(user.getRol());
-				
+				user = new ObjectMapper().readValue(request.getInputStream(), UserDto.class);
+				username = user.getUsername();
+				password = user.getPassword();
+
 			} catch (IOException e) {
-				
+
 				e.printStackTrace();
 			}
 		}
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
-		
-		
+
 		return this.authenticationManager.authenticate(authRequest);
 	}
 
@@ -71,14 +69,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Authentication authResult) throws IOException, ServletException {
 
 		String token = jwtService.create(authResult);
-		
+
 		response.addHeader(JWTServiceImpl.HEADER_STRING, JWTServiceImpl.TOKEN_PREFIX + token);
-		
+
 		Map<String, Object> body = new HashMap<String, Object>();
 		body.put("token", token);
 		body.put("user", (User) authResult.getPrincipal());
 		body.put("mensaje", "Has Iniciado sesion correctamente");
-		
+
 		response.getWriter().write(new ObjectMapper().writeValueAsString(body));
 		response.setStatus(200);
 		response.setContentType("application/json");
@@ -86,12 +84,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException failed) throws IOException{
+			AuthenticationException failed) throws IOException {
 
 		Map<String, Object> body = new HashMap<String, Object>();
 		body.put("mensaje", "Error de autenticacion: username o password incorrecto!");
 		body.put("error", failed.getMessage());
-		
+
 		response.getWriter().write(new ObjectMapper().writeValueAsString(body));
 		response.setStatus(401);
 		response.setContentType("application/json");

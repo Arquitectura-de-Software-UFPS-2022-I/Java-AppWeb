@@ -1,7 +1,5 @@
 package com.arquitectura.firmas.controllers;
 
-import com.arquitectura.firmas.repository.services.IFilesService;
-
 import models.FileDto;
 import models.FirmaDto;
 import models.SignatureRequestDto;
@@ -27,41 +25,38 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/signature")
 public class SignatureController {
-    @Autowired
-    private IFilesService fileService;
 
+	@GetMapping("")
+	public ResponseEntity<?> getAll() throws Exception {
+		return ResponseEntity.ok(new ApiService().getSignatureRequestService().getRequest());
+	}
 
-   
-    @GetMapping("")
-    public ResponseEntity<?> getAll() throws Exception{
-        return ResponseEntity.ok(new ApiService().getSignatureRequestService().getRequest());
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<?> get(@PathVariable int id) throws Exception {
+		return ResponseEntity.ok(new ApiService().getSignatureRequestService().getRequestUser(id));
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable int id) throws Exception{
-        return ResponseEntity.ok(new ApiService().getSignatureRequestService().getRequestUser(id));
-    }
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> getSignatureUser(@PathVariable int id) throws Exception{
-        return ResponseEntity.ok(new ApiService().getSignatureRequestService().getRequestId(id));
-    }
-    
-    @PostMapping("/save")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> save(@RequestBody SignatureRequestDto firma) throws Exception{
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiService().getSignatureRequestService().saveRequest(firma));
-    }
+	@GetMapping("/user/{id}")
+	public ResponseEntity<?> getSignatureUser(@PathVariable int id) throws Exception {
+		return ResponseEntity.ok(new ApiService().getSignatureRequestService().getRequestId(id));
+	}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody SignatureRequestDto firma) throws Exception{
-        return ResponseEntity.ok(new ApiService().getSignatureRequestService().updateRequest(firma));
-    }
+	@PostMapping("/save")
+	@PreAuthorize("permitAll()")
+	public ResponseEntity<?> save(@RequestBody SignatureRequestDto firma) throws Exception {
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(new ApiService().getSignatureRequestService().saveRequest(firma));
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable int id) throws Exception{
-    	new ApiService().getSignatureRequestService().deleteRequest(id);
-        return ResponseEntity.ok().build();
-    }
+	@PutMapping("/{id}")
+	public ResponseEntity<?> update(@RequestBody SignatureRequestDto firma) throws Exception {
+		return ResponseEntity.ok(new ApiService().getSignatureRequestService().updateRequest(firma));
+	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> update(@PathVariable int id) throws Exception {
+		new ApiService().getSignatureRequestService().deleteRequest(id);
+		return ResponseEntity.ok().build();
+	}
 
 }

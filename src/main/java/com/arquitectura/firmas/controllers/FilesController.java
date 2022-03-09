@@ -1,6 +1,5 @@
 package com.arquitectura.firmas.controllers;
 
-import com.arquitectura.firmas.repository.services.IFilesService;
 
 import models.FileDto;
 import services.impl.ApiService;
@@ -21,47 +20,39 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/file")
 public class FilesController {
-    @Autowired
-    private IFilesService fileService;
 
+	@PostMapping("/add")
+	public ResponseEntity<?> save(@RequestBody File file, @RequestParam String aux) throws Exception {
+		return ResponseEntity.ok(new ApiService().getFileService().saveFile(aux, file));
+	}
 
-   
-    @PostMapping("/add")
-    public ResponseEntity<?> save(@RequestBody File file, @RequestParam String aux) throws Exception{
-        return ResponseEntity.ok(new ApiService().getFileService().saveFile(aux, file));
-    }
-    
-    @GetMapping("")
-    public ResponseEntity<?> getAll() throws Exception{
-        return ResponseEntity.ok(new ApiService().getFileService().getFiles());
-    }
-    
-    
-    @GetMapping("/download")
-    public ResponseEntity<?> getDocumentAsignature(@RequestParam String dir, @RequestParam int aux) throws Exception{
-        new ApiService().getFileService().downloadFileSigned(dir,aux);
-        return ResponseEntity.ok().build();
-    
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable int id) throws Exception{
-    	new ApiService().getFileService().deleteFile(id);
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/validar")
-    public ResponseEntity<?> validar(@RequestBody File file) throws Exception{
-        return ResponseEntity.ok(new ApiService().getFileService().validateAsignature(file));
-    }
-    
+	@GetMapping("")
+	public ResponseEntity<?> getAll() throws Exception {
+		return ResponseEntity.ok(new ApiService().getFileService().getFiles());
+	}
+
+	@GetMapping("/download")
+	public ResponseEntity<?> getDocumentAsignature(@RequestParam String dir, @RequestParam int aux) throws Exception {
+		new ApiService().getFileService().downloadFileSigned(dir, aux);
+		return ResponseEntity.ok().build();
+
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> eliminar(@PathVariable int id) throws Exception {
+		new ApiService().getFileService().deleteFile(id);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/validar")
+	public ResponseEntity<?> validar(@RequestBody File file) throws Exception {
+		return ResponseEntity.ok(new ApiService().getFileService().validateAsignature(file));
+	}
+
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<?> delete(@PathVariable int id) throws Exception{
 //    	new ApiService().getFileService().deleteFile(id);
 //        return ResponseEntity.ok().build();
 //    }
-    
-  
-
 
 }

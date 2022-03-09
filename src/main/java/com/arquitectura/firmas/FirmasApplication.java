@@ -7,9 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import models.FileDto;
 import models.UserDto;
 import services.impl.ApiService;
+
 
 @SpringBootApplication
 public class FirmasApplication implements CommandLineRunner {
